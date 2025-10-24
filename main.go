@@ -1,19 +1,25 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"github.com/alexia-23/go_final_project/pkg/db"
+	"github.com/alexia-23/go_final_project/pkg/logger"
+	"github.com/alexia-23/go_final_project/pkg/server"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	fs := http.FileServer(http.Dir("./web")) // раздаём статические файлы из ./web
-	http.Handle("/", fs)
-
-	port := ":7540"
-	fmt.Println("🚀 Сервер запущен на http://localhost" + port)
-
-	err := http.ListenAndServe(port, nil)
+	logger.Init()
+	log := logger.Get()
+	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("Ошибка запуска сервера:", err)
+		log.Println("Не удалось загрузить .env:", err)
 	}
+
+	db.Setup()
+
+	err = server.Init()
+	if err != nil {
+		log.Fatal("Ошибка запуска сервера: ", err)
+	}
+
 }
