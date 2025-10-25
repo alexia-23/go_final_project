@@ -12,7 +12,7 @@ import (
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 	log := logger.Get()
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		utils.WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 

@@ -21,7 +21,6 @@ func InsertTask(task domain.TaskCreatePayload) (string, error) {
 		VALUES (:date, :title, :comment, :repeat)
 	`
 
-	// ExecNamed принимает структуру или map[string]any
 	result, err := db.NamedExec(query, task)
 	if err != nil {
 		return "", fmt.Errorf("ошибка вставки: %w", err)
