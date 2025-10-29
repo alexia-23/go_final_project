@@ -41,6 +41,7 @@ func Init() error {
 	mux := http.NewServeMux()
 
 	fs := http.FileServer(http.Dir("./web"))
+	mux.HandleFunc("/api/nextdate", handlers.NextDate)
 	mux.HandleFunc("/api/task", handlers.CreateTask)
 	mux.HandleFunc("/api/tasks", handlers.ListTasks)
 	mux.Handle("/", fs)
