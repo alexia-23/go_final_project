@@ -42,7 +42,8 @@ func Init() error {
 
 	fs := http.FileServer(http.Dir("./web"))
 	mux.HandleFunc("/api/nextdate", handlers.NextDate)
-	mux.HandleFunc("/api/task", handlers.CreateTask)
+	mux.HandleFunc("/api/task/done", handlers.PostTaskDone)
+	mux.HandleFunc("/api/task", handlers.HandleTask)
 	mux.HandleFunc("/api/tasks", handlers.ListTasks)
 	mux.Handle("/", fs)
 	handler := loggingMiddleware(mux)
