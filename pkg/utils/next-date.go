@@ -12,6 +12,10 @@ func handleDailyPeriod(now time.Time, dstart string, interval int) (string, erro
 	if err != nil {
 		return "", err
 	}
+	if t.After(now) {
+		next := t.AddDate(0, 0, interval)
+		return next.Format("20060102"), nil
+	}
 	diff := now.Sub(t)
 	days := int(diff.Hours() / 24)
 	r := days % interval
@@ -26,6 +30,12 @@ func handleYearPeriod(now time.Time, dstart string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if t.After(now) {
+		next := time.Date(t.Year()+1, t.Month(), t.Day(),
+			t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
+		return next.Format("20060102"), nil
+	}
+
 	next := time.Date(now.Year(), t.Month(), t.Day(),
 		t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
 	if !next.After(now) {
@@ -44,6 +54,9 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 		}
 		interval, err := strconv.Atoi(entries[1])
 		if err != nil {
+			return "", errors.New("invalid interval")
+		}
+		if interval > 400 {
 			return "", errors.New("invalid interval")
 		}
 		return handleDailyPeriod(now, dstart, interval)
