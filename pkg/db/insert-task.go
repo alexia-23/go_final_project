@@ -17,7 +17,7 @@ func InsertTask(task domain.TaskCreatePayload) (string, error) {
 	defer db.Close()
 
 	query := `
-		INSERT INTO tasks (date, title, comment, repeat)
+		INSERT INTO scheduler (date, title, comment, repeat)
 		VALUES (:date, :title, :comment, :repeat)
 	`
 

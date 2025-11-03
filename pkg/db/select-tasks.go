@@ -19,7 +19,7 @@ func SelectTasks() ([]domain.Task, error) {
 
 	query := `
 		SELECT id, date, title, comment, repeat
-		FROM tasks
+		FROM scheduler
 		ORDER BY date
 	`
 
