@@ -66,3 +66,28 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 	}
 	return "", errors.New("invalid period")
 }
+
+func ValidateRepeat(repeat string) bool {
+	if len(repeat) == 0 {
+		return true
+	}
+	entries := strings.Split(repeat, " ")
+	period := entries[0]
+	if period == "y" && len(entries) == 1 {
+		return true
+	}
+	if period != "d" {
+		return false
+	}
+	if len(entries) != 2 {
+		return false
+	}
+	interval, err := strconv.Atoi(entries[1])
+	if err != nil {
+		return false
+	}
+	if interval > 400 {
+		return false
+	}
+	return true
+}

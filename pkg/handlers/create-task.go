@@ -7,6 +7,7 @@ import (
 	"github.com/alexia-23/go_final_project/pkg/logger"
 	"github.com/alexia-23/go_final_project/pkg/utils"
 	"net/http"
+	"time"
 )
 
 func CreateTask(w http.ResponseWriter, r *http.Request) {
@@ -27,6 +28,34 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	if payload.Title == "" {
 		utils.WriteError(w, "missing field: title", http.StatusBadRequest)
 		return
+	}
+
+	if !utils.ValidateRepeat(payload.Repeat) {
+		utils.WriteError(w, "invalid field: repeat", http.StatusBadRequest)
+		return
+	}
+
+	now := time.Now()
+	today := now.Format("20060102")
+	if payload.Date == "" {
+		payload.Date = today
+	} else {
+		_, err := time.Parse("20060102", payload.Date)
+		if err != nil {
+			utils.WriteError(w, "invalid field: date", http.StatusBadRequest)
+			return
+		}
+	}
+
+	if payload.Repeat == "" && today > payload.Date {
+		payload.Date = today
+	} else if today > payload.Date {
+		next, err := utils.NextDate(now, payload.Date, payload.Repeat)
+		if err != nil {
+			utils.WriteError(w, "invalid field: date", http.StatusBadRequest)
+			return
+		}
+		payload.Date = next
 	}
 
 	id, err := db.InsertTask(payload)
