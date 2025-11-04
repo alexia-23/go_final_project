@@ -19,7 +19,7 @@ func PutTask(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	if payload.Id == 0 {
+	if payload.ID == 0 {
 		WriteError(w, "missing field: id", http.StatusBadRequest)
 		return
 	}

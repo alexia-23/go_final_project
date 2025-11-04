@@ -36,8 +36,8 @@ func UpdateTask(task domain.Task) (string, error) {
 		return "", fmt.Errorf("не удалось определить количество изменённых строк: %w", err)
 	}
 	if rows == 0 {
-		return "", fmt.Errorf("задача с id=%d не найдена", task.Id)
+		return "", fmt.Errorf("задача с id=%d не найдена", task.ID)
 	}
 
-	return fmt.Sprintf("%d", task.Id), nil
+	return fmt.Sprintf("%d", task.ID), nil
 }

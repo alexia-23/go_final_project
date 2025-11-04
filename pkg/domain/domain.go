@@ -12,7 +12,7 @@ type Task struct {
 	Title   string `db:"title" json:"title"`
 	Comment string `db:"comment" json:"comment"`
 	Repeat  string `db:"repeat" json:"repeat"`
-	Id      int    `db:"id" json:"id,string"`
+	ID      int    `db:"id" json:"id,string"`
 }
 
 type TaskListResponse struct {
