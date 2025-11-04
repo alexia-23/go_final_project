@@ -10,10 +10,6 @@ import (
 )
 
 func GetTask(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
 	params := r.URL.Query()
 	raw := params.Get("id")
 	id, err := strconv.Atoi(raw)

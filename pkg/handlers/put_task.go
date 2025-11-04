@@ -10,10 +10,6 @@ import (
 )
 
 func PutTask(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPut {
-		WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
 
 	var payload domain.Task
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {

@@ -10,10 +10,6 @@ import (
 )
 
 func CreateTask(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
 
 	var payload domain.TaskCreatePayload
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
