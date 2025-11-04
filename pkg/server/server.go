@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -40,9 +39,9 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 func Init() error {
 	mux := http.NewServeMux()
-
+	log := logger.Get()
 	fs := http.FileServer(http.Dir("./web"))
-	mux.HandleFunc("/api/nextdate", handlers.NextDate)
+	mux.HandleFunc("/api/nextdate", handlers.HandleNextDate)
 	mux.HandleFunc("/api/task/done", handlers.PostTaskDone)
 	mux.HandleFunc("/api/task", handlers.HandleTask)
 	mux.HandleFunc("/api/tasks", handlers.ListTasks)

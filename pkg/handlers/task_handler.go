@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"net/http"
-
-	"github.com/alexia-23/go_final_project/pkg/utils"
 )
 
 func HandleTask(w http.ResponseWriter, r *http.Request) {
@@ -17,6 +15,6 @@ func HandleTask(w http.ResponseWriter, r *http.Request) {
 	case http.MethodDelete:
 		DeleteTask(w, r)
 	default:
-		utils.WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	}
 }

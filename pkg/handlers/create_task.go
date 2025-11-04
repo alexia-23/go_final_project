@@ -7,30 +7,29 @@ import (
 
 	"github.com/alexia-23/go_final_project/pkg/db"
 	"github.com/alexia-23/go_final_project/pkg/domain"
-	"github.com/alexia-23/go_final_project/pkg/utils"
 )
 
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		utils.WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 
 	var payload domain.TaskCreatePayload
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		msg := "invalid JSON: " + err.Error()
-		utils.WriteError(w, msg, http.StatusBadRequest)
+		WriteError(w, msg, http.StatusBadRequest)
 		return
 	}
 	defer r.Body.Close()
 
 	if payload.Title == "" {
-		utils.WriteError(w, "missing field: title", http.StatusBadRequest)
+		WriteError(w, "missing field: title", http.StatusBadRequest)
 		return
 	}
 
-	if !utils.ValidateRepeat(payload.Repeat) {
-		utils.WriteError(w, "invalid field: repeat", http.StatusBadRequest)
+	if !ValidateRepeat(payload.Repeat) {
+		WriteError(w, "invalid field: repeat", http.StatusBadRequest)
 		return
 	}
 
@@ -41,7 +40,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	} else {
 		_, err := time.Parse("20060102", payload.Date)
 		if err != nil {
-			utils.WriteError(w, "invalid field: date", http.StatusBadRequest)
+			WriteError(w, "invalid field: date", http.StatusBadRequest)
 			return
 		}
 	}
@@ -49,9 +48,9 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	if payload.Repeat == "" && today > payload.Date {
 		payload.Date = today
 	} else if today > payload.Date {
-		next, err := utils.NextDate(now, payload.Date, payload.Repeat)
+		next, err := NextDate(now, payload.Date, payload.Repeat)
 		if err != nil {
-			utils.WriteError(w, "invalid field: date", http.StatusBadRequest)
+			WriteError(w, "invalid field: date", http.StatusBadRequest)
 			return
 		}
 		payload.Date = next
@@ -59,7 +58,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	id, err := db.InsertTask(payload)
 	if err != nil {
-		utils.WriteError(w, "error saving into db: "+err.Error(), http.StatusInternalServerError)
+		WriteError(w, "error saving into db: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
