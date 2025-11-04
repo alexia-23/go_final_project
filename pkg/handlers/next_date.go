@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"fmt"
-	"github.com/alexia-23/go_final_project/pkg/logger"
-	"github.com/alexia-23/go_final_project/pkg/utils"
 	"net/http"
 	"time"
+
+	"github.com/alexia-23/go_final_project/pkg/logger"
+	"github.com/alexia-23/go_final_project/pkg/utils"
 )
 
 func NextDate(w http.ResponseWriter, r *http.Request) {

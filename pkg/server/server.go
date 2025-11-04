@@ -1,12 +1,13 @@
 package server
 
 import (
-	"github.com/alexia-23/go_final_project/pkg/handlers"
-	"github.com/alexia-23/go_final_project/pkg/logger"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/alexia-23/go_final_project/pkg/handlers"
+	"github.com/alexia-23/go_final_project/pkg/logger"
 )
 
 type statusRecorder struct {

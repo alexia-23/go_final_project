@@ -2,10 +2,11 @@ package db
 
 import (
 	"database/sql"
-	"github.com/alexia-23/go_final_project/pkg/logger"
-	_ "github.com/mattn/go-sqlite3"
 	"io/ioutil"
 	"os"
+
+	"github.com/alexia-23/go_final_project/pkg/logger"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func Setup() {

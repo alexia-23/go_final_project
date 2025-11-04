@@ -2,9 +2,10 @@ package db
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/alexia-23/go_final_project/pkg/domain"
 	"github.com/jmoiron/sqlx"
-	"os"
 )
 
 func InsertTask(task domain.TaskCreatePayload) (string, error) {

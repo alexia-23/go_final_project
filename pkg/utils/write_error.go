@@ -2,9 +2,10 @@ package utils
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/alexia-23/go_final_project/pkg/domain"
 	"github.com/alexia-23/go_final_project/pkg/logger"
-	"net/http"
 )
 
 func WriteError(w http.ResponseWriter, msg string, code int) {

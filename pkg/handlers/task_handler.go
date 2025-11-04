@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	"github.com/alexia-23/go_final_project/pkg/utils"
 	"net/http"
+
+	"github.com/alexia-23/go_final_project/pkg/utils"
 )
 
 func HandleTask(w http.ResponseWriter, r *http.Request) {

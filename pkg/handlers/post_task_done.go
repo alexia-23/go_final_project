@@ -3,16 +3,18 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/alexia-23/go_final_project/pkg/db"
 	"github.com/alexia-23/go_final_project/pkg/logger"
 	"github.com/alexia-23/go_final_project/pkg/utils"
-	"net/http"
-	"strconv"
 )
 
-func DeleteTask(w http.ResponseWriter, r *http.Request) {
+func PostTaskDone(w http.ResponseWriter, r *http.Request) {
 	log := logger.Get()
-	if r.Method != http.MethodDelete {
+	if r.Method != http.MethodPost {
 		utils.WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
@@ -23,7 +25,21 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	_, err = db.DeleteTaskById(id)
+	task, err := db.SelectTaskById(id)
+	if err == sql.ErrNoRows {
+		utils.WriteError(w, "Задача не найдена", http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		utils.WriteError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if task.Repeat == "" {
+		_, err = db.DeleteTaskById(id)
+	} else {
+		task.Date, err = utils.NextDate(time.Now(), task.Date, task.Repeat)
+		_, err = db.UpdateTask(task)
+	}
 
 	if err == sql.ErrNoRows {
 		utils.WriteError(w, "Задача не найдена", http.StatusNotFound)
@@ -33,7 +49,7 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	log.Println("task deleted: ", id)
+	log.Println("task marked done: ", task)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

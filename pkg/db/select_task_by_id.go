@@ -3,9 +3,10 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"os"
+
 	"github.com/alexia-23/go_final_project/pkg/domain"
 	"github.com/jmoiron/sqlx"
-	"os"
 )
 
 func SelectTaskById(id int) (domain.Task, error) {

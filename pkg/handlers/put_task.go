@@ -2,28 +2,34 @@ package handlers
 
 import (
 	"encoding/json"
+	"net/http"
+	"time"
+
 	"github.com/alexia-23/go_final_project/pkg/db"
 	"github.com/alexia-23/go_final_project/pkg/domain"
 	"github.com/alexia-23/go_final_project/pkg/logger"
 	"github.com/alexia-23/go_final_project/pkg/utils"
-	"net/http"
-	"time"
 )
 
-func CreateTask(w http.ResponseWriter, r *http.Request) {
+func PutTask(w http.ResponseWriter, r *http.Request) {
 	log := logger.Get()
-	if r.Method != http.MethodPost {
+	if r.Method != http.MethodPut {
 		utils.WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 
-	var payload domain.TaskCreatePayload
+	var payload domain.Task
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		msg := "invalid JSON: " + err.Error()
 		utils.WriteError(w, msg, http.StatusBadRequest)
 		return
 	}
 	defer r.Body.Close()
+
+	if payload.Id == 0 {
+		utils.WriteError(w, "missing field: id", http.StatusBadRequest)
+		return
+	}
 
 	if payload.Title == "" {
 		utils.WriteError(w, "missing field: title", http.StatusBadRequest)
@@ -58,13 +64,13 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 		payload.Date = next
 	}
 
-	id, err := db.InsertTask(payload)
+	id, err := db.UpdateTask(payload)
 	if err != nil {
 		utils.WriteError(w, "error saving into db: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	log.Println("task created: ", id)
+	log.Println("task updated: ", id)
 
 	resp := domain.TaskCreateResponse{ID: &id}
 

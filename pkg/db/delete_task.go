@@ -2,8 +2,9 @@ package db
 
 import (
 	"fmt"
-	"github.com/jmoiron/sqlx"
 	"os"
+
+	"github.com/jmoiron/sqlx"
 )
 
 func DeleteTaskById(id int) (string, error) {

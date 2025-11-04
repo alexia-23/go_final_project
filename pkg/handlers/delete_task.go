@@ -1,31 +1,44 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
+	"net/http"
+	"strconv"
+
 	"github.com/alexia-23/go_final_project/pkg/db"
-	"github.com/alexia-23/go_final_project/pkg/domain"
 	"github.com/alexia-23/go_final_project/pkg/logger"
 	"github.com/alexia-23/go_final_project/pkg/utils"
-	"net/http"
 )
 
-func ListTasks(w http.ResponseWriter, r *http.Request) {
+func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	log := logger.Get()
-	if r.Method != http.MethodGet {
+	if r.Method != http.MethodDelete {
 		utils.WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-	tasks, err := db.SelectTasks()
+	params := r.URL.Query()
+	raw := params.Get("id")
+	id, err := strconv.Atoi(raw)
+	if err != nil {
+		utils.WriteError(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	_, err = db.DeleteTaskById(id)
+
+	if err == sql.ErrNoRows {
+		utils.WriteError(w, "Задача не найдена", http.StatusNotFound)
+		return
+	}
 	if err != nil {
 		utils.WriteError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	log.Println("tasks selected: ", len(tasks))
-	resp := domain.TaskListResponse{Tasks: tasks}
+	log.Println("task deleted: ", id)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(resp); err != nil {
+	if err := json.NewEncoder(w).Encode(map[string]any{}); err != nil {
 		http.Error(w, "failed to encode response: "+err.Error(), http.StatusInternalServerError)
 	}
 }
