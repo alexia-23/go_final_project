@@ -7,12 +7,10 @@ import (
 
 	"github.com/alexia-23/go_final_project/pkg/db"
 	"github.com/alexia-23/go_final_project/pkg/domain"
-	"github.com/alexia-23/go_final_project/pkg/logger"
 	"github.com/alexia-23/go_final_project/pkg/utils"
 )
 
 func PutTask(w http.ResponseWriter, r *http.Request) {
-	log := logger.Get()
 	if r.Method != http.MethodPut {
 		utils.WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
@@ -70,13 +68,11 @@ func PutTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("task updated: ", id)
-
 	resp := domain.TaskCreateResponse{ID: &id}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		http.Error(w, "failed to encode response: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

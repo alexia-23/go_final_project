@@ -26,6 +26,4 @@ func Setup() {
 	if _, err := db.Exec(string(script)); err != nil {
 		log.Fatal("ошибка при выполнении миграции:", err)
 	}
-
-	log.Println("Миграция успешно выполнена!")
 }

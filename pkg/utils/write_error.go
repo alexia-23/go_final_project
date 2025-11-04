@@ -15,6 +15,6 @@ func WriteError(w http.ResponseWriter, msg string, code int) {
 	w.WriteHeader(code)
 	resp := domain.TaskCreateResponse{Error: &msg}
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		http.Error(w, "failed to encode response: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

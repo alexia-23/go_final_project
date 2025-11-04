@@ -12,7 +12,7 @@ func main() {
 	log := logger.Get()
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("Не удалось загрузить .env:", err)
+		log.Fatal("Не удалось загрузить .env:", err)
 	}
 
 	db.Setup()

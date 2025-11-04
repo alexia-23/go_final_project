@@ -8,12 +8,10 @@ import (
 	"time"
 
 	"github.com/alexia-23/go_final_project/pkg/db"
-	"github.com/alexia-23/go_final_project/pkg/logger"
 	"github.com/alexia-23/go_final_project/pkg/utils"
 )
 
 func PostTaskDone(w http.ResponseWriter, r *http.Request) {
-	log := logger.Get()
 	if r.Method != http.MethodPost {
 		utils.WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
@@ -49,11 +47,10 @@ func PostTaskDone(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	log.Println("task marked done: ", task)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(map[string]any{}); err != nil {
-		http.Error(w, "failed to encode response: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
