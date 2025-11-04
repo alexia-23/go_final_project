@@ -35,11 +35,11 @@ func PutTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	now := time.Now()
-	today := now.Format("20060102")
+	today := now.Format(DATE_FORMAT)
 	if payload.Date == "" {
 		payload.Date = today
 	} else {
-		_, err := time.Parse("20060102", payload.Date)
+		_, err := time.Parse(DATE_FORMAT, payload.Date)
 		if err != nil {
 			WriteError(w, "invalid field: date", http.StatusBadRequest)
 			return

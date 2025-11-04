@@ -9,14 +9,16 @@ import (
 	"time"
 )
 
+const DATE_FORMAT = "20060102"
+
 func handleDailyPeriod(now time.Time, dstart string, interval int) (string, error) {
-	t, err := time.Parse("20060102", dstart)
+	t, err := time.Parse(DATE_FORMAT, dstart)
 	if err != nil {
 		return "", err
 	}
 	if t.After(now) {
 		next := t.AddDate(0, 0, interval)
-		return next.Format("20060102"), nil
+		return next.Format(DATE_FORMAT), nil
 	}
 	diff := now.Sub(t)
 	days := int(diff.Hours() / 24)
@@ -24,18 +26,18 @@ func handleDailyPeriod(now time.Time, dstart string, interval int) (string, erro
 	delay := interval - r
 	next := now.AddDate(0, 0, delay)
 
-	return next.Format("20060102"), nil
+	return next.Format(DATE_FORMAT), nil
 }
 
 func handleYearPeriod(now time.Time, dstart string) (string, error) {
-	t, err := time.Parse("20060102", dstart)
+	t, err := time.Parse(DATE_FORMAT, dstart)
 	if err != nil {
 		return "", err
 	}
 	if t.After(now) {
 		next := time.Date(t.Year()+1, t.Month(), t.Day(),
 			t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-		return next.Format("20060102"), nil
+		return next.Format(DATE_FORMAT), nil
 	}
 
 	next := time.Date(now.Year(), t.Month(), t.Day(),
@@ -44,7 +46,7 @@ func handleYearPeriod(now time.Time, dstart string) (string, error) {
 		next = time.Date(now.Year()+1, t.Month(), t.Day(),
 			t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
 	}
-	return next.Format("20060102"), nil
+	return next.Format(DATE_FORMAT), nil
 }
 
 func NextDate(now time.Time, dstart string, repeat string) (string, error) {
@@ -103,7 +105,7 @@ func HandleNextDate(w http.ResponseWriter, r *http.Request) {
 
 	now := params.Get("now")
 
-	t, err := time.Parse("20060102", now)
+	t, err := time.Parse(DATE_FORMAT, now)
 	if err != nil {
 		http.Error(w, "Now is required", http.StatusBadRequest)
 		return
