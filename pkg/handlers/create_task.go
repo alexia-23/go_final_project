@@ -11,7 +11,7 @@ import (
 
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 
-	var payload domain.TaskCreatePayload
+	var payload domain.Task
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		msg := "invalid JSON: " + err.Error()
 		WriteError(w, msg, http.StatusBadRequest)
