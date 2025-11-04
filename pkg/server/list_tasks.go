@@ -1,21 +1,20 @@
-package handlers
+package server
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/alexia-23/go_final_project/pkg/db"
 	"github.com/alexia-23/go_final_project/pkg/domain"
 )
 
-func ListTasks(w http.ResponseWriter, r *http.Request) {
+func (s *Server) ListTasks(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		s.WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-	tasks, err := db.SelectTasks()
+	tasks, err := s.DB.SelectTasks()
 	if err != nil {
-		WriteError(w, err.Error(), http.StatusInternalServerError)
+		s.WriteError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	resp := domain.TaskListResponse{Tasks: tasks}

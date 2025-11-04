@@ -1,32 +1,23 @@
-package db
+package database
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/alexia-23/go_final_project/pkg/domain"
-	"github.com/jmoiron/sqlx"
 )
 
-func UpdateTask(task domain.Task) (string, error) {
-	dataSource := os.Getenv("DATA_SOURCE")
-	db, err := sqlx.Open("sqlite3", dataSource)
-	if err != nil {
-		return "", fmt.Errorf("ошибка подключения к БД: %w", err)
-	}
-	defer db.Close()
-
+func (d *Database) UpdateTask(task domain.Task) (string, error) {
 	query := `
 		UPDATE scheduler
 		SET
-			date    = :date,
-			title   = :title,
-			comment = :comment,
-			repeat  = :repeat
-		WHERE id = :id
+			date    = ?,
+			title   = ?,
+			comment = ?,
+			repeat  = ?
+		WHERE id = ?
 	`
 
-	result, err := db.NamedExec(query, task)
+	result, err := d.DB.Exec(query, task.Date, task.Title, task.Comment, task.Repeat, task.ID)
 	if err != nil {
 		return "", fmt.Errorf("ошибка при обновлении задачи: %w", err)
 	}
@@ -35,6 +26,7 @@ func UpdateTask(task domain.Task) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("не удалось определить количество изменённых строк: %w", err)
 	}
+
 	if rows == 0 {
 		return "", fmt.Errorf("задача с id=%d не найдена", task.ID)
 	}

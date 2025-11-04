@@ -1,36 +1,30 @@
-package handlers
+package server
 
 import (
 	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/alexia-23/go_final_project/pkg/db"
 	"github.com/alexia-23/go_final_project/pkg/domain"
 )
 
-func PutTask(w http.ResponseWriter, r *http.Request) {
+func (s *Server) CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	var payload domain.Task
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		msg := "invalid JSON: " + err.Error()
-		WriteError(w, msg, http.StatusBadRequest)
+		s.WriteError(w, msg, http.StatusBadRequest)
 		return
 	}
 	defer r.Body.Close()
 
-	if payload.ID == 0 {
-		WriteError(w, "missing field: id", http.StatusBadRequest)
-		return
-	}
-
 	if payload.Title == "" {
-		WriteError(w, "missing field: title", http.StatusBadRequest)
+		s.WriteError(w, "missing field: title", http.StatusBadRequest)
 		return
 	}
 
 	if !ValidateRepeat(payload.Repeat) {
-		WriteError(w, "invalid field: repeat", http.StatusBadRequest)
+		s.WriteError(w, "invalid field: repeat", http.StatusBadRequest)
 		return
 	}
 
@@ -41,7 +35,7 @@ func PutTask(w http.ResponseWriter, r *http.Request) {
 	} else {
 		_, err := time.Parse(DATE_FORMAT, payload.Date)
 		if err != nil {
-			WriteError(w, "invalid field: date", http.StatusBadRequest)
+			s.WriteError(w, "invalid field: date", http.StatusBadRequest)
 			return
 		}
 	}
@@ -51,15 +45,15 @@ func PutTask(w http.ResponseWriter, r *http.Request) {
 	} else if today > payload.Date {
 		next, err := NextDate(now, payload.Date, payload.Repeat)
 		if err != nil {
-			WriteError(w, "invalid field: date", http.StatusBadRequest)
+			s.WriteError(w, "invalid field: date", http.StatusBadRequest)
 			return
 		}
 		payload.Date = next
 	}
 
-	id, err := db.UpdateTask(payload)
+	id, err := s.DB.InsertTask(payload)
 	if err != nil {
-		WriteError(w, "error saving into db: "+err.Error(), http.StatusInternalServerError)
+		s.WriteError(w, "error saving into db: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 

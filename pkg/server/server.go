@@ -1,14 +1,21 @@
 package server
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/alexia-23/go_final_project/pkg/handlers"
-	"github.com/alexia-23/go_final_project/pkg/logger"
+	"github.com/alexia-23/go_final_project/pkg/database"
 )
 
+type Server struct {
+	DB     *database.Database
+	Logger *log.Logger
+	Mux    *http.ServeMux
+}
+
+// statusRecorder нужен для перехвата кода ответа HTTP
 type statusRecorder struct {
 	http.ResponseWriter
 	status int
@@ -19,16 +26,15 @@ func (r *statusRecorder) WriteHeader(code int) {
 	r.ResponseWriter.WriteHeader(code)
 }
 
-func loggingMiddleware(next http.Handler) http.Handler {
-	log := logger.Get()
+// loggingMiddleware — логирует запросы с временем выполнения и статусом
+func (s *Server) loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		// обёртка для ResponseWriter, чтобы ловить статус
-		rec := &statusRecorder{ResponseWriter: w, status: 200}
+		rec := &statusRecorder{ResponseWriter: w, status: http.StatusOK}
 
 		next.ServeHTTP(rec, r)
 
-		log.Printf("[%s] %s %d %v",
+		s.Logger.Printf("[%s] %s %d %v",
 			r.Method,
 			r.URL.Path,
 			rec.status,
@@ -37,23 +43,35 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func Init() error {
-	mux := http.NewServeMux()
-	log := logger.Get()
-	fs := http.FileServer(http.Dir("./web"))
-	mux.HandleFunc("/api/nextdate", handlers.HandleNextDate)
-	mux.HandleFunc("/api/task/done", handlers.PostTaskDone)
-	mux.HandleFunc("/api/task", handlers.HandleTask)
-	mux.HandleFunc("/api/tasks", handlers.ListTasks)
-	mux.Handle("/", fs)
-	handler := loggingMiddleware(mux)
+// New — конструктор, создаёт сервер и настраивает маршруты
+func New(db *database.Database) *Server {
+	s := &Server{
+		DB:     db,
+		Logger: log.New(os.Stdout, "", log.LstdFlags|log.Lmicroseconds),
+		Mux:    http.NewServeMux(),
+	}
 
+	// Настройка маршрутов
+	fs := http.FileServer(http.Dir("./web"))
+
+	s.Mux.HandleFunc("/api/nextdate", s.HandleNextDate)
+	s.Mux.HandleFunc("/api/task/done", s.PostTaskDone)
+	s.Mux.HandleFunc("/api/task", s.HandleTask)
+	s.Mux.HandleFunc("/api/tasks", s.ListTasks)
+	s.Mux.Handle("/", fs)
+
+	return s
+}
+
+// Run — запускает HTTP-сервер
+func (s *Server) Run() error {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "7540"
 	}
 
-	log.Println("Сервер запущен на http://localhost:" + port)
+	s.Logger.Println("Сервер запущен на http://localhost:" + port)
 
+	handler := s.loggingMiddleware(s.Mux)
 	return http.ListenAndServe(":"+port, handler)
 }

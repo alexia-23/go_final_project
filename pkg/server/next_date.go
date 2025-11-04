@@ -1,4 +1,4 @@
-package handlers
+package server
 
 import (
 	"errors"
@@ -96,7 +96,7 @@ func ValidateRepeat(repeat string) bool {
 	return true
 }
 
-func HandleNextDate(w http.ResponseWriter, r *http.Request) {
+func (s *Server) HandleNextDate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return

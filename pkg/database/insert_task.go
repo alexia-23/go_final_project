@@ -1,28 +1,18 @@
-package db
+package database
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/alexia-23/go_final_project/pkg/domain"
-	"github.com/jmoiron/sqlx"
 )
 
-func InsertTask(task domain.TaskCreatePayload) (string, error) {
-	dataSource := os.Getenv("DATA_SOURCE")
-
-	db, err := sqlx.Open("sqlite3", dataSource)
-	if err != nil {
-		return "", fmt.Errorf("ошибка подключения к БД: %w", err)
-	}
-	defer db.Close()
-
+func (d *Database) InsertTask(task domain.Task) (string, error) {
 	query := `
 		INSERT INTO scheduler (date, title, comment, repeat)
-		VALUES (:date, :title, :comment, :repeat)
+		VALUES (?, ?, ?, ?)
 	`
 
-	result, err := db.NamedExec(query, task)
+	result, err := d.DB.Exec(query, task.Date, task.Title, task.Comment, task.Repeat)
 	if err != nil {
 		return "", fmt.Errorf("ошибка вставки: %w", err)
 	}

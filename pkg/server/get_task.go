@@ -1,29 +1,27 @@
-package handlers
+package server
 
 import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
 	"strconv"
-
-	"github.com/alexia-23/go_final_project/pkg/db"
 )
 
-func GetTask(w http.ResponseWriter, r *http.Request) {
+func (s *Server) GetTask(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 	raw := params.Get("id")
 	id, err := strconv.Atoi(raw)
 	if err != nil {
-		WriteError(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		s.WriteError(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	task, err := db.SelectTaskById(id)
+	task, err := s.DB.SelectTaskById(id)
 	if err == sql.ErrNoRows {
-		WriteError(w, "Задача не найдена", http.StatusNotFound)
+		s.WriteError(w, "Задача не найдена", http.StatusNotFound)
 		return
 	}
 	if err != nil {
-		WriteError(w, err.Error(), http.StatusInternalServerError)
+		s.WriteError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
