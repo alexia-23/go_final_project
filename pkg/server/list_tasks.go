@@ -12,7 +12,7 @@ func (s *Server) ListTasks(w http.ResponseWriter, r *http.Request) {
 		s.WriteError(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-	tasks, err := s.DB.SelectTasks()
+	tasks, err := s.Storage.SelectTasks()
 	if err != nil {
 		s.WriteError(w, err.Error(), http.StatusInternalServerError)
 		return

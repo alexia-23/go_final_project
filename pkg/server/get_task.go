@@ -15,7 +15,7 @@ func (s *Server) GetTask(w http.ResponseWriter, r *http.Request) {
 		s.WriteError(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	task, err := s.DB.SelectTaskById(id)
+	task, err := s.Storage.SelectTaskById(id)
 	if err == sql.ErrNoRows {
 		s.WriteError(w, "Задача не найдена", http.StatusNotFound)
 		return

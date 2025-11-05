@@ -1,4 +1,4 @@
-package database
+package storage
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/alexia-23/go_final_project/pkg/domain"
 )
 
-func (d *Database) UpdateTask(task domain.Task) (string, error) {
+func (d *Storage) UpdateTask(task domain.Task) (string, error) {
 	query := `
 		UPDATE scheduler
 		SET
@@ -17,7 +17,7 @@ func (d *Database) UpdateTask(task domain.Task) (string, error) {
 		WHERE id = ?
 	`
 
-	result, err := d.DB.Exec(query, task.Date, task.Title, task.Comment, task.Repeat, task.ID)
+	result, err := d.db.Exec(query, task.Date, task.Title, task.Comment, task.Repeat, task.ID)
 	if err != nil {
 		return "", fmt.Errorf("ошибка при обновлении задачи: %w", err)
 	}

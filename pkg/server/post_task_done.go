@@ -20,7 +20,7 @@ func (s *Server) PostTaskDone(w http.ResponseWriter, r *http.Request) {
 		s.WriteError(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	task, err := s.DB.SelectTaskById(id)
+	task, err := s.Storage.SelectTaskById(id)
 	if err == sql.ErrNoRows {
 		s.WriteError(w, "Задача не найдена", http.StatusNotFound)
 		return
@@ -30,10 +30,10 @@ func (s *Server) PostTaskDone(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if task.Repeat == "" {
-		_, err = s.DB.DeleteTaskById(id)
+		_, err = s.Storage.DeleteTaskById(id)
 	} else {
 		task.Date, err = NextDate(time.Now(), task.Date, task.Repeat)
-		_, err = s.DB.UpdateTask(task)
+		_, err = s.Storage.UpdateTask(task)
 	}
 
 	if err == sql.ErrNoRows {

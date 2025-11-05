@@ -6,13 +6,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/alexia-23/go_final_project/pkg/database"
+	"github.com/alexia-23/go_final_project/pkg/storage"
 )
 
 type Server struct {
-	DB     *database.Database
-	Logger *log.Logger
-	Mux    *http.ServeMux
+	Storage *storage.Storage
+	Logger  *log.Logger
+	Mux     *http.ServeMux
 }
 
 // statusRecorder нужен для перехвата кода ответа HTTP
@@ -44,11 +44,11 @@ func (s *Server) loggingMiddleware(next http.Handler) http.Handler {
 }
 
 // New — конструктор, создаёт сервер и настраивает маршруты
-func New(db *database.Database) *Server {
+func New(db *storage.Storage) *Server {
 	s := &Server{
-		DB:     db,
-		Logger: log.New(os.Stdout, "", log.LstdFlags|log.Lmicroseconds),
-		Mux:    http.NewServeMux(),
+		Storage: db,
+		Logger:  log.New(os.Stdout, "", log.LstdFlags|log.Lmicroseconds),
+		Mux:     http.NewServeMux(),
 	}
 
 	// Настройка маршрутов

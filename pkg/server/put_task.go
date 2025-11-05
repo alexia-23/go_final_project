@@ -56,7 +56,7 @@ func (s *Server) PutTask(w http.ResponseWriter, r *http.Request) {
 		payload.Date = next
 	}
 
-	id, err := s.DB.UpdateTask(payload)
+	id, err := s.Storage.UpdateTask(payload)
 	if err != nil {
 		s.WriteError(w, "error saving into db: "+err.Error(), http.StatusInternalServerError)
 		return

@@ -1,4 +1,4 @@
-package database
+package storage
 
 import (
 	"database/sql"
@@ -8,12 +8,12 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-type Database struct {
-	DB *sql.DB
+type Storage struct {
+	db *sql.DB
 }
 
 // New — конструктор, создаёт подключение и применяет миграции.
-func New() (*Database, error) {
+func New() (*Storage, error) {
 	dataSource := os.Getenv("DATA_SOURCE")
 	if dataSource == "" {
 		return nil, fmt.Errorf("переменная окружения DATA_SOURCE не задана")
@@ -35,12 +35,12 @@ func New() (*Database, error) {
 		return nil, fmt.Errorf("ошибка при выполнении миграции: %w", err)
 	}
 
-	return &Database{DB: db}, nil
+	return &Storage{db: db}, nil
 }
 
 // Close — метод для корректного закрытия соединения
-func (d *Database) Close() {
-	if d.DB != nil {
-		_ = d.DB.Close()
+func (d *Storage) Close() {
+	if d.db != nil {
+		_ = d.db.Close()
 	}
 }

@@ -3,7 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/alexia-23/go_final_project/pkg/database"
+	"github.com/alexia-23/go_final_project/pkg/storage"
+
 	"github.com/alexia-23/go_final_project/pkg/server"
 	"github.com/joho/godotenv"
 )
@@ -15,13 +16,13 @@ func main() {
 		log.Fatal("Не удалось загрузить .env:", err)
 	}
 
-	db, err := database.New()
+	db, err := storage.New()
 	if err != nil {
 		log.Fatal("Не удалось настроить базу:", err)
 	}
 
 	s := server.New(db)
-	defer s.DB.Close()
+	defer s.Storage.Close()
 	if err != nil {
 		log.Fatal("Ошибка запуска сервера: ", err)
 	}

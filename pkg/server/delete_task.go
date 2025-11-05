@@ -15,7 +15,7 @@ func (s *Server) DeleteTask(w http.ResponseWriter, r *http.Request) {
 		s.WriteError(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	_, err = s.DB.DeleteTaskById(id)
+	_, err = s.Storage.DeleteTaskById(id)
 
 	if err == sql.ErrNoRows {
 		s.WriteError(w, "Задача не найдена", http.StatusNotFound)

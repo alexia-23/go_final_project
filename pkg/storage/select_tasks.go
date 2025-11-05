@@ -1,4 +1,4 @@
-package database
+package storage
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/alexia-23/go_final_project/pkg/domain"
 )
 
-func (d *Database) SelectTasks() ([]domain.Task, error) {
+func (d *Storage) SelectTasks() ([]domain.Task, error) {
 	tasks := []domain.Task{}
 
 	query := `
@@ -15,7 +15,7 @@ func (d *Database) SelectTasks() ([]domain.Task, error) {
 		ORDER BY date
 	`
 
-	rows, err := d.DB.Query(query)
+	rows, err := d.db.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("ошибка при выборке задач: %w", err)
 	}

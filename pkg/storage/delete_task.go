@@ -1,13 +1,13 @@
-package database
+package storage
 
 import (
 	"fmt"
 )
 
-func (d *Database) DeleteTaskById(id int) (string, error) {
+func (d *Storage) DeleteTaskById(id int) (string, error) {
 	query := `DELETE FROM scheduler WHERE id = ?`
 
-	result, err := d.DB.Exec(query, id)
+	result, err := d.db.Exec(query, id)
 	if err != nil {
 		return "", fmt.Errorf("ошибка при удалении задачи: %w", err)
 	}

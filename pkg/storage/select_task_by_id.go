@@ -1,4 +1,4 @@
-package database
+package storage
 
 import (
 	"database/sql"
@@ -7,7 +7,7 @@ import (
 	"github.com/alexia-23/go_final_project/pkg/domain"
 )
 
-func (d *Database) SelectTaskById(id int) (domain.Task, error) {
+func (d *Storage) SelectTaskById(id int) (domain.Task, error) {
 	var task domain.Task
 
 	query := `
@@ -16,7 +16,7 @@ func (d *Database) SelectTaskById(id int) (domain.Task, error) {
 		WHERE id = ?
 	`
 
-	row := d.DB.QueryRow(query, id)
+	row := d.db.QueryRow(query, id)
 
 	err := row.Scan(
 		&task.ID,
