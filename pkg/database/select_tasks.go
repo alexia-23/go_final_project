@@ -7,7 +7,7 @@ import (
 )
 
 func (d *Database) SelectTasks() ([]domain.Task, error) {
-	var tasks []domain.Task
+	tasks := []domain.Task{}
 
 	query := `
 		SELECT id, date, title, comment, repeat
