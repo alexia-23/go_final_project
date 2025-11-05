@@ -1,0 +1,33 @@
+package server
+
+import (
+	"database/sql"
+	"encoding/json"
+	"net/http"
+	"strconv"
+)
+
+func (s *Server) GetTask(w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	raw := params.Get("id")
+	id, err := strconv.Atoi(raw)
+	if err != nil {
+		s.WriteError(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	task, err := s.Storage.SelectTaskById(id)
+	if err == sql.ErrNoRows {
+		s.WriteError(w, "Задача не найдена", http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		s.WriteError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(task); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
